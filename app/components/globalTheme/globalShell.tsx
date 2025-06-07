@@ -10,7 +10,7 @@ export default function GlobalShell(props: GlobalShellProps) {
   return (
     <>
       <GlobalNavigationBar/>
-        <main>
+        <main className="flex-grow-1">
           <Outlet/>
         </main>
       <GlobalFooter/>
