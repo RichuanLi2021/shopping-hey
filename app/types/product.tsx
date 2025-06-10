@@ -1,4 +1,7 @@
-export interface ProductItems {
+import { boolean } from "yup";
+
+//Properties of the product
+export interface ProductProperties {
     id: number
     name: string;
     description: string;
@@ -8,12 +11,12 @@ export interface ProductItems {
 
 //Product list
 export interface ProductListProps {
-    products: ProductItems[]
+    products: ProductProperties[]
 }
 
 //Product card
 export interface ProductCardProps {
-  product: ProductItems;
+  product: ProductProperties;
 }
 
 //Product modal
@@ -24,10 +27,11 @@ export interface ProductModalProps {
   title?: string;
   children: React.ReactNode;
   submitLabel?: string;
+  isSubmitting?: boolean
 }
 
 //Add Product
-export type NewProduct = Omit<ProductItems, "id">;
+export type NewProduct = Omit<ProductProperties, "id">;
 
 export interface AddProductProps {
   onAdd: (newProduct: NewProduct) => void;

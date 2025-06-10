@@ -1,7 +1,7 @@
-import type { ProductItems } from "~/types/product";
+import type { ProductProperties } from "~/types/product";
 
 
-export const sampleProducts: ProductItems[] = [
+export const sampleProducts: ProductProperties[] = [
   {
     id: 1,
     name: "Wireless Headphones",

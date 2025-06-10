@@ -9,9 +9,10 @@ export const ProductModal = ({
     title,
     children,
     submitLabel = "Save",
+    ...props
 }: ProductModalProps) => {
     return (
-        <Modal show={show} onHide={onClose}>
+        <Modal show={show} onHide={onClose} {...props}>
             <Modal.Header closeButton>
                 <Modal.Title>{title || "Modal"}</Modal.Title>
             </Modal.Header>

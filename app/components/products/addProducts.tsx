@@ -1,42 +1,13 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { ProductModal } from "./productModal";
+import { Formik, Form as FormikForm, useField } from 'formik';
+import { MyTextInput } from "~/utils/fieldsType";
 import type { AddProductProps } from "~/types/product";
+import { AddProductValidationSchema } from "~/validations/formValidationSchema";
 
-export const AddProduct = (
-    { onAdd }: AddProductProps
-) => {
+export const AddProduct = ({ onAdd }: AddProductProps) => {
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    banner: "",
-    description: "",
-    price: "",
-  });
-
-  const handleSubmit = () => {
-    const newProduct = {
-      name: formData.name.trim(),
-      banner: formData.banner.trim(),
-      description: formData.description.trim(),
-      price: parseFloat(formData.price),
-    };
-
-    if (
-      !newProduct.name ||
-      !newProduct.banner ||
-      !newProduct.description ||
-      isNaN(newProduct.price)
-    ) {
-      alert("Please fill in all fields with valid values.");
-      return;
-    }
-
-    onAdd(newProduct);
-    setShowModal(false);
-    setFormData({ name: "", banner: "", description: "", price: "" });
-  };
-
   return (
     <>
       <Button variant="primary" onClick={() => setShowModal(true)}>
@@ -44,64 +15,69 @@ export const AddProduct = (
         Add Product
       </Button>
 
-      <ProductModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onSubmit={handleSubmit}
-        title="Add New Product"
-        submitLabel="Add Product"
+      <Formik
+        initialValues={{
+          productName: "",
+          bannerUrl: "",
+          description: "",
+          price: "",
+        }}
+        validationSchema={AddProductValidationSchema}
+        onSubmit={(values, {setSubmitting, resetForm}) => {
+          onAdd({
+            name: values.productName.trim(),
+            banner: values.bannerUrl.trim(),
+            description: values.description.trim(),
+            price: parseFloat(values.price),
+          });
+          resetForm();
+          setSubmitting(false);
+          setShowModal(false);
+        }}
       >
-        <Form>
-          <Form.Group className="mb-3" controlId="productName">
-            <Form.Label>Product Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter product name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-          </Form.Group>
+        {({handleSubmit, isSubmitting}) => (
+          <ProductModal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmit={() => handleSubmit()}
+            title="Add New Product"
+            submitLabel="Add Product"
+            isSubmitting = {isSubmitting}
+          >
+            <FormikForm noValidate>
+              {/* simple text inputs */}
+              <MyTextInput
+                label="Product Name"
+                name="productName"
+                placeholder="Enter product name"
+              />
 
-          <Form.Group className="mb-3" controlId="productBanner">
-            <Form.Label>Banner URL</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter image URL (banner)"
-              value={formData.banner}
-              onChange={(e) =>
-                setFormData({ ...formData, banner: e.target.value })
-              }
-            />
-          </Form.Group>
+              <MyTextInput
+                label="Banner URL"
+                name="bannerURL"
+                placeholder="Enter image URL (banner)"
+              />
 
-          <Form.Group className="mb-3" controlId="productDescription">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Enter description"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-          </Form.Group>
+              {/* a textarea for description */}
+              <MyTextInput
+                label="Description"
+                name="description"
+                as="textarea"
+                rows={3}
+                placeholder="Enter description"
+              />
 
-          <Form.Group className="mb-3" controlId="productPrice">
-            <Form.Label>Price</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter price"
-              value={formData.price}
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
-              }
-            />
-          </Form.Group>
-        </Form>
-      </ProductModal>
+              {/* treated as a string here; Yup will catch non-numeric */}
+              <MyTextInput
+                label="Price"
+                name="price"
+                type="number"
+                placeholder="Enter price"
+              />
+            </FormikForm>
+          </ProductModal>
+        )}
+      </Formik>
     </>
   );
 };
