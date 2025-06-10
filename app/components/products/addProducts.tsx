@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { useState } from "react";
+import { Button} from "react-bootstrap";
 import { ProductModal } from "./productModal";
-import { Formik, Form as FormikForm, useField } from 'formik';
+import { Formik, Form as FormikForm} from 'formik';
 import { MyTextInput } from "~/utils/fieldsType";
 import type { AddProductProps } from "~/types/product";
 import { AddProductValidationSchema } from "~/validations/formValidationSchema";
@@ -35,10 +35,13 @@ export const AddProduct = ({ onAdd }: AddProductProps) => {
           setShowModal(false);
         }}
       >
-        {({handleSubmit, isSubmitting}) => (
+        {({handleSubmit, isSubmitting, resetForm}) => (
           <ProductModal
             show={showModal}
-            onClose={() => setShowModal(false)}
+            onClose={() => {
+              resetForm();
+              setShowModal(false)
+            }}
             onSubmit={() => handleSubmit()}
             title="Add New Product"
             submitLabel="Add Product"
@@ -54,7 +57,7 @@ export const AddProduct = ({ onAdd }: AddProductProps) => {
 
               <MyTextInput
                 label="Banner URL"
-                name="bannerURL"
+                name="bannerUrl"
                 placeholder="Enter image URL (banner)"
               />
 
