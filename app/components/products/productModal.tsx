@@ -9,6 +9,7 @@ export const ProductModal = ({
     title,
     children,
     submitLabel = "Save",
+    isSubmitting = false,
     ...props
 }: ProductModalProps) => {
     return (
