@@ -1,5 +1,3 @@
-import { boolean } from "yup";
-
 //Properties of the product
 export interface ProductProperties {
     id: number
@@ -7,6 +5,18 @@ export interface ProductProperties {
     description: string;
     banner: string,
     price: number
+}
+
+//Add Product Payload
+export type NewProduct = Omit<ProductProperties, "id">;
+
+//Update Product Payload
+export type UpdateProduct = {
+  id: number;
+} & Partial<Omit<ProductProperties, 'id'>>;
+
+export interface AddProductProps {
+  onAdd: (newProduct: NewProduct) => void;
 }
 
 //Product list
@@ -28,11 +38,4 @@ export interface ProductModalProps {
   children: React.ReactNode;
   submitLabel?: string;
   isSubmitting?: boolean
-}
-
-//Add Product
-export type NewProduct = Omit<ProductProperties, "id">;
-
-export interface AddProductProps {
-  onAdd: (newProduct: NewProduct) => void;
 }
