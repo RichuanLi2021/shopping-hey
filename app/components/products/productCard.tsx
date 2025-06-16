@@ -13,7 +13,7 @@ export const ProductCard = ({
 ) => {
   return (
      <Card className="h-100" key={product.id}>
-      <Card.Img variant="top" src={product.banner} />
+      <Card.Img variant="top" src={product.banner} className="product-image" />
       <Card.Body>
         <Card.Title className="text-truncate">{product.name}</Card.Title>
         <Card.Text className="text-truncate">{product.description}</Card.Text>

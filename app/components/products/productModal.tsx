@@ -8,10 +8,9 @@ export const ProductModal = ({
     children,
     submitLabel = "Save",
     isSubmitting = false,
-    ...props
 }: ProductModalProps) => {
     return (
-        <Modal show={show} onHide={onClose} {...props}>
+        <Modal show={show} onHide={onClose}>
             <Modal.Header closeButton>
                 <Modal.Title>{title || "Modal"}</Modal.Title>
             </Modal.Header>

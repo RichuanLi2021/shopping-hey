@@ -8,6 +8,8 @@ import type { Route } from "./+types/root";
 import store from './redux/store';
 import { Provider } from 'react-redux';
 import "./app.css";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const links: Route.LinksFunction = () => [
   { 
@@ -58,6 +60,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <Outlet />
+      <ToastContainer position="top-right" autoClose={3000}/>
     </Provider>
   );
 }
