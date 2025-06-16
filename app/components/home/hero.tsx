@@ -1,11 +1,7 @@
 import {Container, Button, Row, Col, Card} from 'react-bootstrap';
 import { Link } from 'react-router';
 
-interface MyComponentProps {
-  
-}
-
-export default function Hero(props: MyComponentProps) {
+export default function Hero() {
   return (
     <div 
         className="

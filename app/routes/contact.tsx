@@ -1,3 +1,12 @@
+import type { Route } from "./+types/contact";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Contact" },
+    { name: "description", content: "Contact us" },
+  ];
+}
+
 export default function ContactPage() {
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">

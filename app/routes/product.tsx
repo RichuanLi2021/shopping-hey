@@ -1,30 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import { useDispatch, useSelector } from "react-redux";
 import type { NewProduct } from "~/types/product";
-
-import { sampleProducts as initialProducts } from "../data/sampleProducts";
+import type { AppState, AppDispatch } from "~/redux/store";
+import { fetchProducts, createProduct } from "~/redux/actions/actionCreators";
 import { ProductList } from "../components/products/productList";
 import { AddProduct } from "../components/products/addProducts";
+import type { Route } from "./+types/product";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Product" },
+    { name: "description", content: "Product" },
+  ];
+}
 
 export default function ProductPage() {
-  const [products, setProducts] = useState(initialProducts);
+  console.log("ProductPage is rendered")
+  const dispatch = useDispatch<AppDispatch>();
+  const { items: products, loading, error } = useSelector((state: AppState) => state.products);
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
+  console.log("producst are: ", products)
 
   const handleAddProduct = (newProduct: NewProduct) => {
-    const nextId =
-      products.length > 0
-        ? Math.max(...products.map((p) => p.id)) + 1
-        : 1;
-
-    setProducts([
-      ...products,
-      {
-        id: nextId,
-        ...newProduct,
-      },
-    ]);
+    dispatch(createProduct(newProduct));
   };
+
+  if (loading) {
+    return (
+      <Container className="mt-4">
+        <div className="d-flex justify-content-center">
+          <p>Loading products...</p>
+        </div>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="mt-4">
+        <div className="d-flex justify-content-center">
+          <p className="text-danger">{error}</p>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <section>
@@ -41,7 +65,7 @@ export default function ProductPage() {
             <p className="text-muted">We&#39;re currently out of stock</p>
           </div>
         ) : (
-                <ProductList products={products} />
+          <ProductList products={products} />
         )}
       </Container>
     </section>

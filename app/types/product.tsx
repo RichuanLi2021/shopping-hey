@@ -1,4 +1,5 @@
-export interface ProductItems {
+//Properties of the product
+export interface ProductProperties {
     id: number
     name: string;
     description: string;
@@ -6,29 +7,39 @@ export interface ProductItems {
     price: number
 }
 
+//Add Product Payload
+export type NewProduct = Omit<ProductProperties, "id">;
+
+//Update Product Payload
+export type UpdateProduct = {
+  id: number;
+} & Partial<Omit<ProductProperties, 'id'>>;
+
+export type UpdatedValues = Partial<Omit<ProductProperties, 'id'>>;
+export interface AddProductProps {
+  onAdd: (newProduct: NewProduct) => void;
+}
+
 //Product list
 export interface ProductListProps {
-    products: ProductItems[]
+    products: ProductProperties[]
 }
 
 //Product card
 export interface ProductCardProps {
-  product: ProductItems;
+  product: ProductProperties,
+  onDelete: (id: number) => void,
+  onEdit: (id: number) => void
 }
 
 //Product modal
 export interface ProductModalProps {
   show: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (values: UpdatedValues) => void;
   title?: string;
   children: React.ReactNode;
-  submitLabel?: string;
-}
-
-//Add Product
-export type NewProduct = Omit<ProductItems, "id">;
-
-export interface AddProductProps {
-  onAdd: (newProduct: NewProduct) => void;
+  submitLabel: string;
+  isSubmitting?: boolean;
+  initialValues: UpdatedValues;
 }
