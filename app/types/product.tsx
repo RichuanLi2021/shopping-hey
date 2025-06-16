@@ -15,6 +15,7 @@ export type UpdateProduct = {
   id: number;
 } & Partial<Omit<ProductProperties, 'id'>>;
 
+export type UpdatedValues = Partial<Omit<ProductProperties, 'id'>>;
 export interface AddProductProps {
   onAdd: (newProduct: NewProduct) => void;
 }
@@ -26,16 +27,19 @@ export interface ProductListProps {
 
 //Product card
 export interface ProductCardProps {
-  product: ProductProperties;
+  product: ProductProperties,
+  onDelete: (id: number) => void,
+  onEdit: (id: number) => void
 }
 
 //Product modal
 export interface ProductModalProps {
   show: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (values: UpdatedValues) => void;
   title?: string;
   children: React.ReactNode;
-  submitLabel?: string;
-  isSubmitting?: boolean
+  submitLabel: string;
+  isSubmitting?: boolean;
+  initialValues: UpdatedValues;
 }

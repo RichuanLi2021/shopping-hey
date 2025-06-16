@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Button} from "react-bootstrap";
 import { ProductModal } from "./productModal";
 import { Formik, Form as FormikForm} from 'formik';
-import { MyTextInput } from "~/utils/fieldsType";
 import type { AddProductProps } from "~/types/product";
 import { AddProductValidationSchema } from "~/validations/formValidationSchema";
+import { ProductFormFields } from "./productFormFields";
 
 export const AddProduct = ({ onAdd }: AddProductProps) => {
   const [showModal, setShowModal] = useState(false);
@@ -23,7 +23,9 @@ export const AddProduct = ({ onAdd }: AddProductProps) => {
           price: "",
         }}
         validationSchema={AddProductValidationSchema}
-        onSubmit={(values, {setSubmitting, resetForm}) => {
+        onSubmit={(
+          values, 
+          {setSubmitting, resetForm}) => {
           onAdd({
             name: values.productName.trim(),
             banner: values.bannerUrl.trim(),
@@ -46,37 +48,15 @@ export const AddProduct = ({ onAdd }: AddProductProps) => {
             title="Add New Product"
             submitLabel="Add Product"
             isSubmitting = {isSubmitting}
+            initialValues={{
+              name: "",
+              banner: "",
+              description: "",
+              price: 0,
+            }}
           >
-            <FormikForm noValidate>
-              {/* simple text inputs */}
-              <MyTextInput
-                label="Product Name"
-                name="productName"
-                placeholder="Enter product name"
-              />
-
-              <MyTextInput
-                label="Banner URL"
-                name="bannerUrl"
-                placeholder="Enter image URL (banner)"
-              />
-
-              {/* a textarea for description */}
-              <MyTextInput
-                label="Description"
-                name="description"
-                as="textarea"
-                rows={3}
-                placeholder="Enter description"
-              />
-
-              {/* treated as a string here; Yup will catch non-numeric */}
-              <MyTextInput
-                label="Price"
-                name="price"
-                type="number"
-                placeholder="Enter price"
-              />
+            <FormikForm id="product-form" noValidate>
+              <ProductFormFields />
             </FormikForm>
           </ProductModal>
         )}

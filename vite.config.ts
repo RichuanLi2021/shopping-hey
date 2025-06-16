@@ -9,5 +9,6 @@ export default defineConfig({
     tailwindcss(), 
     reactRouter(), 
     tsconfigPaths(), 
-    flowbiteReact()],
+    flowbiteReact()
+  ]
 });
