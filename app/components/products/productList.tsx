@@ -4,7 +4,7 @@ import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import type { ProductListProps, UpdatedValues } from '~/types/product';
 import { ProductCard } from './productCard';
 import { ProductModal } from "./productModal";
-import { updateProduct, deleteProduct } from "~/redux/actions/actionCreators";
+import { updateProduct, deleteProduct } from "~/redux/actions/products/actionCreators";
 import type { ProductProperties } from "~/types/product";
 import type { AppDispatch } from "~/redux/store";
 import { Formik, Form as FormikForm } from "formik";

@@ -1,6 +1,6 @@
-import * as actTypes from "../actions/actionTypes";
-import type ProductState from "../productStateProperties";
-import * as prodActions from "../actions/actionCreators";
+import * as actTypes from "../../actions/products/actionTypes";
+import type ProductState from "./productStateProperties";
+import * as prodActions from "../../actions/products/actionCreators";
 
 const initialState: ProductState = {
     items: [],

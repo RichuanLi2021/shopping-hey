@@ -5,19 +5,27 @@ import type { ProductProperties, NewProduct, UpdateProduct } from "~/types/produ
 import { env } from "~/config/env";
 
 //GET PRODUCTS
-export const fetchProductsRequest = () => ({
-    type: actTypes.FETCH_PRODUCT_REQUEST
-})
+export const fetchProductsRequest = () => (
+    {
+        type: actTypes.FETCH_PRODUCT_REQUEST
+    }
+)
 
-export const fetchProductsSuccess = (products: ProductProperties[]) => ({
-    type: actTypes.FETCH_PRODUCT_SUCCESS,
-    payload: products
-})
+export const fetchProductsSuccess = (products: ProductProperties[]) => (
+    {
+        type: actTypes.FETCH_PRODUCT_SUCCESS,
+        payload: products
+    }
+)
 
-export const fetchProductsFailure = (error: string) => ({
-    type: actTypes.FETCH_PRODUCT_FAILURE,
-    payload: error
-})
+export const fetchProductsFailure = (error: string) => (
+    {
+        type: actTypes.FETCH_PRODUCT_FAILURE,
+        payload: error
+    }
+)
+
+
 
 export const fetchProducts = () => {
     return async (dispatch: Dispatch) => {
