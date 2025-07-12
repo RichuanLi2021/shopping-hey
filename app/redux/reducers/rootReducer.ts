@@ -1,9 +1,34 @@
+import { persistReducer } from 'redux-persist';
 import { combineReducers } from 'redux';
-import productsReducer from './productReducer/productsReducer';
+import productReducer from './productReducer/productReducer';
 import authReducer from './authReducer/authReducer';
+import createWebStorage from "redux-persist/lib/storage/createWebStorage";
+
+const createNoopStorage = () => ({
+  getItem(_key: string) {
+    return Promise.resolve(null);   
+  },
+  setItem(_key: string, value: unknown) {
+    return Promise.resolve(value); 
+  },
+  removeItem(_key: string) {
+    return Promise.resolve();
+  },
+});
+
+const storage =
+  typeof window !== "undefined"
+    ? createWebStorage("local")
+    : createNoopStorage();
+
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['jwtToken', 'isAuthenticated'],
+};
 
 export const rootReducer = combineReducers({
-    products: productsReducer,
-    users: authReducer
-    //other reducers mount here
-})
+  auth: persistReducer(authPersistConfig, authReducer),
+  products: productReducer,
+  // other reducers
+});

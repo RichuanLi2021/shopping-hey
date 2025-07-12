@@ -1,21 +1,19 @@
-import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   isRouteErrorResponse,
-  Outlet
+  Outlet,
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import store from './redux/store';
-import { Provider } from 'react-redux';
-import "./app.css";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import "./app.css";
+import { Provider } from 'react-redux';
+import { store, persistor } from './redux/store';
+import { PersistGate } from "redux-persist/lib/integration/react";
 
 export const links: Route.LinksFunction = () => [
-  { 
-    rel: "preconnect", 
-    href: "https://fonts.googleapis.com" 
-  },
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
     href: "https://fonts.gstatic.com",
@@ -59,8 +57,10 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 export default function App() {
   return (
     <Provider store={store}>
-      <Outlet />
-      <ToastContainer position="top-right" autoClose={3000}/>
+      <PersistGate loading={null} persistor={persistor}>
+        <Outlet />
+        <ToastContainer position="top-right" autoClose={3000} />
+      </PersistGate>
     </Provider>
   );
 }

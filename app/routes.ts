@@ -7,7 +7,7 @@ export default [
         route("products", "routes/product.tsx")
     ]),
 
-    layout("features/usr_auth/theme/authLayout.tsx" ,[
+    layout("features/auth/theme/AuthLayout.tsx" ,[
         route("signup", "routes/signup.tsx"),
         route("login", "routes/login.tsx"),
         route("reset-password", "routes/resetPassword.tsx")

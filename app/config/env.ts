@@ -1,12 +1,28 @@
-export const env = {
-    apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
-    apiPrefix: import.meta.env.VITE_API_PREFIX,
-    enableMockData: import.meta.env.VITE_ENABLE_MOCK_DATA || 'true',
-    appName: import.meta.env.VITE_APP_NAME,
-    appVersion: import.meta.env.VITE_APP_VERSION,
+import * as z from "zod/v4";
 
-    // Build Configuration
-    nodeEnv: import.meta.env.MODE,
-    isDevelopment: import.meta.env.MODE === 'development',
-    isProduction: import.meta.env.MODE === 'production',
-} as const;
+const clientEnvSchema = z.object({
+    VITE_API_BASE_URL: z.url(),
+    VITE_API_PREFIX: z.string().default('/api'),
+
+    VITE_ENABLE_MOCK_DATA: z
+        .enum(['true', 'false'])
+        .transform(v => v === 'true'),
+
+    VITE_APP_NAME:    z.string(),
+    VITE_APP_VERSION: z.string(),
+
+    MODE: z.enum([
+        'development', 
+        'production', 
+        'test', 
+        'staging'
+    ]).default('development'),
+    DEV: z.coerce.boolean(),
+    PROD: z.coerce.boolean(),
+})
+
+export const env = clientEnvSchema.parse(import.meta.env);
+console.log(import.meta.env)
+
+export const isDev  = env.DEV;
+export const isProd = env.PROD;

@@ -1,13 +1,14 @@
 import type AuthState from "./authStateProperties";
-import type { AuthActions } from "~/redux/actions/authActions/Auth-actionCreators";
-import { AuthActionTypes } from "~/redux/actions/authActions/Auth-actionTypes";
+import type { AuthActions } from "../../actions/auth/Auth-actionCreators";
+import { AuthActionTypes } from "../../actions/auth/Auth-actionTypes";
 
 const initialState: AuthState = {
     pendingSignup: undefined,
     pendingLogin: undefined,
 
-    currentUsers: null,
+    currentUser: null,
     jwtToken: null,
+    isAuthenticated: false,
 
     loading: false,
     error: null
@@ -32,7 +33,7 @@ export default function authReducer(
             return {
                 ...state,
 
-                currentUsers: action.payload.user,
+                currentUser: action.payload.user,
                 jwtToken: action.payload.token,
 
                 pendingSignup: undefined,
@@ -59,8 +60,9 @@ export default function authReducer(
         case AuthActionTypes.LOGIN_SUCCESS:
             return {
                 ...state,
-                currentUsers: action.payload.user,
+                currentUser: action.payload.user,
                 jwtToken: action.payload.token,
+                isAuthenticated: true,
 
                 pendingLogin: undefined,
                 loading: false,
@@ -77,7 +79,31 @@ export default function authReducer(
         // Logout – restore slice to initial state
         case AuthActionTypes.LOGOUT:
             return initialState;
-            
+
+        
+        // Handle refresh 
+        case AuthActionTypes.REFRESH_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case AuthActionTypes.REFRESH_SUCCESS:
+            return {
+                ...state,
+                jwtToken: action.payload.token,   // payload is the new token
+                isAuthenticated: true,
+                loading: false,
+                error: null,
+            };
+        case AuthActionTypes.REFRESH_FAILURE:
+            return {
+                ...state,
+                jwtToken: null,
+                isAuthenticated: false,
+                loading: false,
+                error: action.payload.error,
+            };
         default:
             return state;
     }

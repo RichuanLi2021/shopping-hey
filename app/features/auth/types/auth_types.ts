@@ -1,8 +1,9 @@
 export interface SignupValues {
-  fullName: string;
+  name: string;
   email: string;
   phone?: string;
   password: string;
+  role: string;
   confirmPassword: string;
   receiveUpdates?: boolean;
 };
@@ -12,6 +13,11 @@ export interface LoginValues {
   password: string;
   rememberMe?: boolean;
 };
+
+export interface LoginSuccessPayload {
+  user:  User;
+  token: string;
+}
 
 export interface User {
   id: number;
@@ -23,12 +29,11 @@ export interface User {
   // current account status
   status: 'pending' | 'active' | 'suspended';
   // permission level
-  accessLevel: 'user' | 'organizer' | 'admin' | 'superadmin';
+  accessLevel: 'USER' | 'SELLER' | 'ADMIN' | 'SUPERADMIN';
 }
 
 export interface AuthFormProps {
   mode: 'signup' | 'login';
 }
-
 
 

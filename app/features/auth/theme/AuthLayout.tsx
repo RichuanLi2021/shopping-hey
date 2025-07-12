@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link as RouterLink } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -43,6 +43,21 @@ export default function AuthLayout() {
       <CssBaseline />
       <SignContainer direction="column" justifyContent="center">
         <Card variant="outlined">
+          <Typography
+            component={RouterLink}
+            to="/"
+            variant="h4"
+            align="center"
+            sx={{
+              textDecoration: 'none',
+              color: 'primary.main',
+              fontWeight: 700,
+              mb: 2,
+              letterSpacing: 1,
+            }}
+          >
+            ProdManager
+          </Typography>
           <Outlet />
         </Card>
       </SignContainer>

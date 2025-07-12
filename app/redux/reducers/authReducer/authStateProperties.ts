@@ -1,18 +1,13 @@
-import type { User, SignupValues, LoginValues } from "~/features/usr_auth/types/auth";
+import type { User, SignupValues, LoginValues } from "~/features/auth/types/auth_types";
 
 export default interface AuthState {
     pendingSignup?: SignupValues; //form data to be sent
     pendingLogin?: LoginValues;
 
-    currentUsers: User | null;
+    currentUser: User | null;
     jwtToken: string | null;
+    isAuthenticated: boolean;
     
     loading: boolean;
     error: string | null;
 }
-
-
-// 1. need AuthState for admin dashboard: Admin dashboard that lists all registered users
-// 2. need AuthState for Chat app: Chat app keeping a roster of online users
-
-

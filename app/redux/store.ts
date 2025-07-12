@@ -1,33 +1,28 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from './reducers/rootReducer'; 
 import logger from './middleware/logger';
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
+import { persistStore } from 'redux-persist';
 
-const store = configureStore({
+export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(logger),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(logger),
   devTools: process.env.NODE_ENV === 'development'
 });
 
-export type AppState = ReturnType<typeof rootReducer>;
+export type AppState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export default store;
-
-// import { configureStore } from '@reduxjs/toolkit';
-// import { rootReducer } from './reducers/rootReducer'; 
-
-// const store = configureStore({
-//   reducer: rootReducer,
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware()
-//       // .concat(CustomizedMiddleware)
-//       // .concat(anotherMiddleware)
-//       ,
-//   devTools: process.env.NODE_ENV === 'development'
-// });
-
-// export type AppState   = ReturnType<typeof rootReducer>;
-// export type AppDispatch = typeof store.dispatch;
-
-// export default store;
+export const persistor = persistStore(store);

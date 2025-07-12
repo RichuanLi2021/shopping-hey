@@ -1,10 +1,8 @@
-import type { Dispatch } from "redux";
 import { AuthActionTypes } from "./Auth-actionTypes";
-import { toast } from 'react-toastify';
-import type { SignupValues, LoginValues, User } from "~/features/usr_auth/types/auth";
-import * as authApi from '../../../features/usr_auth/service/authApi'
+import type { SignupValues, LoginValues, User, LoginSuccessPayload } from "~/features/auth/types/auth_types";
+import * as authApi from '~/features/auth/services/authApi'
 import type { ThunkAction } from 'redux-thunk';
-import type { AppState } from "~/redux/store";
+import { persistor, type AppState } from "~/redux/store";
 
 //Signup actions
 interface SignupRequestAction {
@@ -29,7 +27,10 @@ export type AuthActions =
   | LoginRequestAction
   | LoginSuccessAction
   | LoginFailureAction
-  | SyncLogoutAction;
+  | SyncLogoutAction
+  | RefreshRequestAction
+  | RefreshSuccessAction
+  | RefreshFailureAction;
 
 export const signupUser = (
   formData: SignupValues
@@ -42,11 +43,13 @@ export const signupUser = (
         type: AuthActionTypes.SIGNUP_SUCCESS,
         payload: { user: data.user, token: data.token },
       });
+      return data;
     } catch (err: any) {
       dispatch({
         type: AuthActionTypes.SIGNUP_FAILURE,
         payload: { error: err.message || 'Signup failed' },
       });
+      throw err;
     }
   };
 };
@@ -70,20 +73,30 @@ interface LoginFailureAction {
 
 export const loginUser = (
   formData: LoginValues
-): ThunkAction<Promise<void>, AppState, unknown, AuthActions> => {
+): ThunkAction<Promise<LoginSuccessPayload>, AppState, unknown, AuthActions> => {
   return async (dispatch) => {
-    dispatch({ type: AuthActionTypes.LOGIN_REQUEST, payload: {formData} });
+    dispatch({ 
+      type: AuthActionTypes.LOGIN_REQUEST, 
+      payload: {formData} 
+    });
     try {
       const data = await authApi.login(formData);
+      // transfer role to accessLevel to adapt to User
+      const user = { ...data.user, accessLevel: data.user.role }
       dispatch({
         type: AuthActionTypes.LOGIN_SUCCESS,
-        payload: { user: data.user, token: data.token },
+        payload: { 
+          user, 
+          token: data.token
+        },
       });
+      return data;
     } catch (err: any) {
       dispatch({
         type: AuthActionTypes.LOGIN_FAILURE,
         payload: { error: err.message || 'Login failed' },
       });
+      throw err;
     }
   };
 };
@@ -93,8 +106,37 @@ interface SyncLogoutAction {
   type: AuthActionTypes.LOGOUT
 };
 
-export const logoutUser = ():ThunkAction<void, AppState, unknown, AuthActions> => 
-  (dispatch) => {
-    localStorage.removeItem('token');
-    dispatch({type: AuthActionTypes.LOGOUT});
+export const logoutUser = ():
+  ThunkAction<void, AppState, unknown, AuthActions> => 
+  async (dispatch) => {
+    try {
+      await authApi.logout();
+      dispatch({ type: AuthActionTypes.LOGOUT });
+
+      await persistor.flush();
+      await persistor.purge();
+      localStorage.removeItem("persist:auth"); // force remove if purge failed to clear
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
 }
+
+// Refresh
+interface RefreshRequestAction {
+  type: AuthActionTypes.REFRESH_REQUEST,
+
+}
+interface RefreshSuccessAction {
+  type: AuthActionTypes.REFRESH_SUCCESS;
+  payload: {token: string}; 
+}
+
+interface RefreshFailureAction {
+  type: AuthActionTypes.REFRESH_FAILURE,
+  payload: {error: string};
+};
+
+export const refreshSuccess = (token: string) => ({
+  type: AuthActionTypes.REFRESH_SUCCESS,
+  payload: token,
+});

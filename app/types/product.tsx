@@ -1,6 +1,8 @@
+import type { S } from "node_modules/react-router/dist/development/route-data-ByAYLHuM.mjs";
+
 //Properties of the product
 export interface ProductProperties {
-    id: number
+    id: string
     name: string;
     description: string;
     banner: string,
@@ -12,7 +14,7 @@ export type NewProduct = Omit<ProductProperties, "id">;
 
 //Update Product Payload
 export type UpdateProduct = {
-  id: number;
+  id: string;
 } & Partial<Omit<ProductProperties, 'id'>>;
 
 export type UpdatedValues = Partial<Omit<ProductProperties, 'id'>>;
@@ -28,8 +30,7 @@ export interface ProductListProps {
 //Product card
 export interface ProductCardProps {
   product: ProductProperties,
-  onDelete: (id: number) => void,
-  onEdit: (id: number) => void
+  onAddToCart?: (id: string) => void
 }
 
 //Product modal

@@ -1,37 +1,53 @@
 import * as React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useDispatch } from 'react-redux';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import { toast } from 'react-toastify';
 import Link from '@mui/material/Link';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '~/redux/hooks';
 import { Link as RouterLink } from 'react-router-dom';
-import type { SignupValues, LoginValues, AuthFormProps } from '~/features/usr_auth/types/auth';
-import { SignupSchema, LoginSchema } from '../../../validations/formValidationSchema';
-import { signupUser, loginUser } from '../../../redux/actions/authActions/Auth-actionCreators';
+import type { SignupValues, LoginValues, AuthFormProps } from '../types/auth_types';
+import { SignupSchema, LoginSchema } from '../validations/formValidationSchema';
+import { signupUser, loginUser } from '~/redux/actions/auth/Auth-actionCreators';
 import type { FormikHelpers } from 'formik';
-import type { AppDispatch } from '../../../redux/store';
 
 export default function AuthForm({ mode }: AuthFormProps) {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleSignup = async (
-    values: SignupValues,
-    { setSubmitting }: FormikHelpers<SignupValues>
-  ) => {
+  values: SignupValues,
+  { setSubmitting }: FormikHelpers<SignupValues>
+) => {
+  try {
     await dispatch(signupUser(values));
+    toast.success('Signup successfully!', { autoClose: 2000 });
+    setTimeout(() => navigate('/login'), 2500);
+  } catch (err) {
+    toast.error('Signup failed');
+    console.log(err)
+  } finally {
     setSubmitting(false);
-  };
+  }
+};
 
   const handleLogin = async (
     values: LoginValues,
     { setSubmitting }: FormikHelpers<LoginValues>
   ) => {
-    await dispatch(loginUser(values));
+    const {user} = await dispatch(loginUser(values));
+    toast.success(
+      `Loginin successful! Welcome ${user.name}`, 
+      { autoClose: 2000 }
+    );
+    setTimeout(() => navigate('/products'), 2500);
     setSubmitting(false);
   };
 
@@ -39,10 +55,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
     return (
       <Formik<SignupValues>
         initialValues={{
-          fullName: '',
+          name: '',
           email: '',
           phone: '',
           password: '',
+          role: '',
           confirmPassword: '',
           receiveUpdates: false
         }}
@@ -53,14 +70,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
           <Form noValidate>
             {/* Full name */}
             <Box mb={2}>
-              <Field name="fullName">
+              <Field name="name">
                 {({ field }: any) => (
                   <TextField
                     {...field}
                     fullWidth
-                    label="Full Name"
-                    error={touched.fullName && Boolean(errors.fullName)}
-                    helperText={<ErrorMessage name="fullName" />}
+                    label="name"
+                    error={touched.name && Boolean(errors.name)}
+                    helperText={<ErrorMessage name="name" />}
                   />
                 )}
               </Field>
@@ -81,6 +98,28 @@ export default function AuthForm({ mode }: AuthFormProps) {
               </Field>
             </Box>
 
+            {/* Role */}
+            <Box mb={2}>
+              <Field name="role">
+                {({ field }: any) => (
+                  <TextField
+                    {...field}
+                    select
+                    fullWidth
+                    label="I am an"
+                    error={touched.role && Boolean(errors.role)}
+                    helperText={<ErrorMessage name="role" />}
+                  >
+                    <MenuItem value="" disabled>
+                      <em>Select role</em>
+                    </MenuItem>
+                    <MenuItem value="USER">USER</MenuItem>
+                    <MenuItem value="SELLER">SELLER</MenuItem>
+                  </TextField>
+                )}
+              </Field>
+            </Box>
+
             {/* Password */}
             <Box mb={2}>
               <Field name="password">
@@ -97,6 +136,22 @@ export default function AuthForm({ mode }: AuthFormProps) {
               </Field>
             </Box>
 
+            {/* Confirm Password */}
+            <Box mb={2}>
+              <Field name="confirmPassword">
+                {({ field }: any) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="password"
+                    label="Confirm Password"
+                    error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+                    helperText={<ErrorMessage name="confirmPassword" />}
+                  />
+                )}
+              </Field>
+            </Box>
+
             {/* Phone */}
             <Box mb={2}>
               <Field name="phone">
@@ -107,21 +162,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     label="Phone Number"
                     error={touched.phone && Boolean(errors.phone)}
                     helperText={<ErrorMessage name="phone" />}
-                  />
-                )}
-              </Field>
-            </Box>
-
-            {/* Confirm Password */}
-            <Box mb={2}>
-              <Field name="confirmPassword" type="password">
-                {({ field }: any) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Confirm Password"
-                    error={touched.confirmPassword && Boolean(errors.confirmPassword)}
-                    helperText={<ErrorMessage name="confirmPassword" />}
                   />
                 )}
               </Field>
@@ -204,11 +244,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
           {/* Password */}
           <Box mb={2}>
-            <Field name="password" type="password">
+            <Field name="password">
               {({ field }: any) => (
                 <TextField
                   {...field}
                   fullWidth
+                  type="password"
                   label="Password"
                   error={touched.password && Boolean(errors.password)}
                   helperText={<ErrorMessage name="password" />}
